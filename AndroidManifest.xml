@@ -1,0 +1,62 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.app.pictolike"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="20"
+        android:maxSdkVersion="20" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" android:maxSdkVersion="20"/>
+    
+
+    <application
+        android:icon="@drawable/ic_app_icon"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"  
+        android:allowBackup="true" >
+                     
+        
+        <activity
+           android:name="com.app.pictolike.SignInActivity"
+            android:screenOrientation="portrait" >
+            <intent-filter android:label="@string/app_name" >
+                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+            
+                          
+        <activity
+            android:name="com.app.pictolike.TabFragmentActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        
+        <activity
+            android:name="com.app.pictolike.CameraScreenActivity"
+            android:screenOrientation="portrait" >
+           <!-- <intent-filter android:label="@string/app_name" >
+            </intent-filter>  before theme change -->
+        </activity>
+        
+   
+            
+        <activity
+            android:name="com.app.pictolike.SettingsScreenActivity"
+            android:screenOrientation="portrait" >
+        </activity> 
+        
+        
+    </application>
+
+</manifest>

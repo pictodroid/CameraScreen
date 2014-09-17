@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+     >
+   
+     
+    <item android:id="@+id/action_settings1"
+          android:icon="@drawable/ic_action_search"
+          android:title="Settings 1"
+          android:showAsAction="never"/>
+     
+    <item android:id="@+id/action_settings2"
+          android:icon="@drawable/ic_action_search"
+          android:title="Settings 2"
+          android:showAsAction="never" />
+</menu>

@@ -1,0 +1,79 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.app.pictolike.SplashActivity"
+    android:background="@android:color/white" >
+
+    <ImageView
+        android:id="@+id/landing_logo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="78dp"
+        android:src="@drawable/animated_splash_logo_1" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_below="@+id/landing_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:src="@drawable/pictolike_landing_image_text" />
+
+    <EditText
+        android:id="@+id/email_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/imageView1"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/edittext_background_white"
+        android:ems="10"
+        android:hint="E-mail"
+        android:paddingLeft="5dp"
+        android:textColor="#FBC261"
+        android:textColorHint="#FBC261" 
+        android:inputType="textEmailAddress">
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/password_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/email_edittext"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/edittext_background_white"
+        android:ems="10"
+        android:hint="Password"
+        android:paddingLeft="5dp"
+        android:textColor="#FBC261"
+        android:inputType="textPassword"
+        android:textColorHint="#FBC261" />
+
+    <Button
+        android:id="@+id/button_comein"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@+id/password_edittext"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/come_in_selector" />
+
+    <ImageView
+        android:id="@+id/btn_forgot_password"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/button_comein"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/bg_forgot_password" />
+
+</RelativeLayout>

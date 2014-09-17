@@ -1,0 +1,14 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppTheme" parent="android:Theme.Light">
+        	<item name="android:actionDropDownStyle">@style/DropDownNav</item>
+          <item name="android:popupMenuStyle">@style/PopUp</item>
+      </style>   
+     <style name="PopUp" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
+    <item name="android:popupBackground">@android:color/white</item>
+	</style>    
+   <style name="DropDownNav" parent="@android:style/Widget.Holo.Light.Spinner">
+        <item name="android:popupBackground">@android:color/white</item>
+    </style>
+  
+</resources>

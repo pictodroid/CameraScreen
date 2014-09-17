@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    android:weightSum="1.0" >
+
+   <ListView android:id="@+id/listView"
+              android:layout_height="match_parent"
+              android:layout_width="match_parent"/>
+    
+    <Preference
+    android:title="Term of Use"
+    android:summary="What you usually don't read">
+
+    <intent
+      android:action="android.intent.action.VIEW"
+      android:data="http://pictolike.com/" />
+
+  </Preference>
+
+    
+      <Preference
+    android:title="Privacy Policy"
+    android:summary="Our Privacy">
+
+    <intent
+      android:action="android.intent.action.VIEW"
+      android:data="http://pictolike.com/" />
+
+  </Preference>
+  
+     <Preference
+    android:title="Code of App!"
+    android:summary="Short honest talk">
+
+    <intent
+      android:action="android.intent.action.VIEW"
+      android:data="http://pictolike.com/" />
+
+  </Preference>
+  
+  
+      
+</LinearLayout>

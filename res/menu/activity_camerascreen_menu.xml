@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+     >
+   
+    <!-- Help -->
+    <item android:id="@+id/action_flash"
+          android:icon="@drawable/ic_flash_on"
+          android:title="Flash On"
+          android:showAsAction="ifRoom"/>
+     
+    <!-- Check updates -->
+      <!-- Check updates -->
+    <item android:id="@+id/action_noFlash"
+       	  
+          android:icon="@drawable/ic_flash_off"
+          android:title="Flash Disabled"
+          android:showAsAction="ifRoom" />
+</menu>
