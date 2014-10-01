@@ -9,44 +9,39 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.hardware.Camera.PictureCallback;
-import android.hardware.Camera.Parameters;
+
+import com.app.pictolike.Utils.LocationMgr;
+import com.app.pictolike.mysql.MySQLCommand;
+import com.app.pictolike.mysql.MySQLConnect;
 
 @SuppressLint("InlinedApi")
-public class CameraScreenActivity extends Fragment implements
-		SurfaceHolder.Callback {
+public class CameraScreenActivity extends Fragment implements SurfaceHolder.Callback {
 
 	Camera camera;
 	SurfaceView surfaceView;
 	SurfaceHolder surfaceHolder;
 	ImageView captureButton, flipButton, flashButton;
-	File pictureFile;
+	ImageView locview;
+
 	boolean check = false;
 	boolean isFlashOn = false;
 	File file;
@@ -78,6 +73,9 @@ public class CameraScreenActivity extends Fragment implements
 		// setContentView(R.layout.activity_camerascreen);
 		// getWindow().setFormat(PixelFormat.UNKNOWN);
 
+		locview = (ImageView)rootView.findViewById(R.id.locview);
+		locview.setVisibility(View.INVISIBLE);
+		
 		/** Mapping the capture and flip button from the xml */
 		captureButton = (ImageView) rootView.findViewById(R.id.captureButton);
 		flipButton = (ImageView) rootView.findViewById(R.id.btn_selfie);
@@ -87,6 +85,7 @@ public class CameraScreenActivity extends Fragment implements
 		surfaceHolder = surfaceView.getHolder();
 		surfaceHolder.addCallback(this);
 		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		
 		camera = Camera.open();
 		camera.setDisplayOrientation(90);
 		final boolean haveFlash = getActivity().getPackageManager()
@@ -152,7 +151,7 @@ public class CameraScreenActivity extends Fragment implements
 					surfaceHolder = surfaceView.getHolder();
 					surfaceHolder.addCallback(CameraScreenActivity.this);
 					surfaceHolder
-							.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+					.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 					camera = Camera.open(1);
 					camera.setDisplayOrientation(90);
 					try {
@@ -179,7 +178,7 @@ public class CameraScreenActivity extends Fragment implements
 					surfaceHolder = surfaceView.getHolder();
 					surfaceHolder.addCallback(CameraScreenActivity.this);
 					surfaceHolder
-							.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+					.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 					camera = Camera.open(0);
 					camera.setDisplayOrientation(90);
 
@@ -216,6 +215,18 @@ public class CameraScreenActivity extends Fragment implements
 		// super.onSaveInstanceState(outState);
 		if (outState.isEmpty()) {
 			outState.putBoolean("bug:fix", true);
+		}
+	}
+	
+	public void disableCamera(){
+		
+		locview.setVisibility(View.VISIBLE);
+		
+		if (camera != null) {
+			camera.stopPreview();
+			camera.setPreviewCallback(null);
+			camera.release();
+			camera = null;
 		}
 	}
 
@@ -258,35 +269,51 @@ public class CameraScreenActivity extends Fragment implements
 	PictureCallback pictureBack = new PictureCallback() {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
-			pictureFile = getOutputMediaFile();
 
-			if (pictureFile == null) {
+			final PhotoFile photoFile = getOutputMediaFile();
+
+			if (photoFile.photoFile == null){
 				return;
 			}
+
 			final Context context = CameraScreenActivity.this.getActivity();
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-					context);
-			alertDialogBuilder.setTitle("Titel");
-			alertDialogBuilder.setMessage("Do you really want to whatever?");
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+			alertDialogBuilder.setTitle("Upload");
+			alertDialogBuilder.setMessage("Do you really want to upload?");
 			alertDialogBuilder.setIcon(android.R.drawable.ic_dialog_alert);
-			alertDialogBuilder
-					.setPositiveButton(android.R.string.yes,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									Toast.makeText(context,
-											"Yaay", Toast.LENGTH_SHORT).show();
-								}
-							}).setNegativeButton(android.R.string.no, null);
-			
+			alertDialogBuilder.setPositiveButton(android.R.string.yes,
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,	int whichButton) {
+
+					String username = SignInActivity.g_name;
+					String filename = photoFile.fileName;
+					String datecreated = photoFile.timeStatmp;
+					String locationcreated = LocationMgr.getInstance().getLocation();
+
+					MySQLConnect.savefile(username, filename, datecreated, locationcreated, 
+							new MySQLCommand.OnCompleteListener() {
+
+						@Override
+						public void OnComplete(Object result) {
+							// TODO Auto-generated method stub
+							Toast.makeText(getActivity(), "Photo upload complete!", Toast.LENGTH_LONG).show();
+							
+							disableCamera();
+						}
+					});
+
+					//Toast.makeText(context, "Yaay", Toast.LENGTH_SHORT).show();
+				}
+			}).setNegativeButton(android.R.string.no, null);
+
 			alertDialogBuilder.show();
 
 			try {
-				FileOutputStream fos = new FileOutputStream(pictureFile);
+				FileOutputStream fos = new FileOutputStream(photoFile.photoFile);
 				fos.write(data);
 				fos.close();
-				Toast.makeText(getActivity(), "Image Saved!", Toast.LENGTH_LONG)
-						.show();
+
+				//Toast.makeText(getActivity(), "Image Saved!", Toast.LENGTH_LONG).show();
 			} catch (FileNotFoundException e) {
 
 			} catch (IOException e) {
@@ -299,32 +326,44 @@ public class CameraScreenActivity extends Fragment implements
 	 * getOutputMediaFile returns the file path on the device where we want to
 	 * save the picture
 	 */
-	private static File getOutputMediaFile() {
-		String timeStampDir = new SimpleDateFormat("yyyy-MM-dd")
-				.format(new Date());
+	private static PhotoFile getOutputMediaFile() {
+
+		String timeStampDir = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		File mediaStorageDir = Environment.getExternalStorageDirectory();
 		File dir = new File(mediaStorageDir, timeStampDir);
+
 		if (!dir.isDirectory()) {
 			dir.mkdirs();
 			Log.d("PictoLike", "failed to create directory");
 		}
 
 		// Create a media file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
-				.format(new Date());
+		Date now = new Date();
+		String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(now);
+		String fileName = "IMG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(now) + ".png";
+
 		File mediaFile = null;
 		try {
-			mediaFile = File.createTempFile(
-					File.separator + "IMG_" + timeStamp, ".png", dir);
-
+			mediaFile = File.createTempFile(File.separator + "IMG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(now), ".png", dir);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return mediaFile;
+		PhotoFile photoFile = new PhotoFile();
+		photoFile.timeStatmp = timeStamp;
+		photoFile.fileName = fileName;
+		photoFile.photoFile = mediaFile;
+
+		return photoFile;
 	}
 
+	public static class PhotoFile {
+
+		public String timeStatmp;
+		public String fileName;
+		public File  photoFile;
+	}
 	/**
 	 * Calls when user pushes the shutter button,this method includes the
 	 * callback to the camera api
