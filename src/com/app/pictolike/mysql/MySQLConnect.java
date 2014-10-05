@@ -37,6 +37,11 @@ public class MySQLConnect {
 	public static final String FIELD_BIRTHDAY = "birthday";
 	public static final String FIELD_GENDER = "gender";
 	
+	public static final String DEVICEID = "deviceID";
+	public static final String IMG221 = "img221B";
+	public static final String USERAGE = "usrage";
+	
+	
 	
 	static public void signin(String name, String password, MySQLCommand.OnCompleteListener listener) {
 		SigninCommand cmd = new SigninCommand(name, password);
@@ -48,8 +53,8 @@ public class MySQLConnect {
 
 
 	
-	static public void savefile(String username,String filename, String datecreated, String locationcreated, MySQLCommand.OnCompleteListener listener) {
-		SaveFileCommand cmd = new SaveFileCommand(username,filename, datecreated, locationcreated);
+	static public void savefile(String username,String filename, String datecreated, String locationcreated,  String deviceID, String userage, String gender, MySQLCommand.OnCompleteListener listener) {
+		SaveFileCommand cmd = new SaveFileCommand(username,filename, datecreated, locationcreated, deviceID, userage, gender);
 		if (listener != null)
 			cmd.setOnCompleteListener(listener);
 		run_command(cmd);

@@ -6,5 +6,6 @@ public class MyPeople {
 	public String password;
 	public String birthday;
 	public String gender; 
-	//public String deviceId; 
+	public String deviceId;
+	public String usrage;
 }

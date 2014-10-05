@@ -67,7 +67,7 @@ class SigninCommand extends MySQLCommand {
 			MyPeople people = new MyPeople();
 			
 			people.name = json_data.getString(MySQLConnect.USER_NAME);
-		//	people.email = json_data.getString(MySQLConnect.FIELD_EMAIL);
+	
 			people.password = json_data.getString(MySQLConnect.FIELD_PASSWORD);
 			
 			setResult(people);			

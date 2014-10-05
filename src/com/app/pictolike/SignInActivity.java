@@ -30,6 +30,8 @@ public class SignInActivity extends Activity  {
 	ImageView SignIn,Join;
 	EditText  userName,userPassword;
 	static String name;
+	static String g_name;
+	
 	private MySQLCommand.OnCompleteListener m_oSqlListener = new MySQLCommand.OnCompleteListener() {
 		
 		@Override
@@ -119,6 +121,7 @@ public class SignInActivity extends Activity  {
 
 	private void OnSignIn() {
 		String name = userName.getText().toString();
+		String g_gname = name;
 		Log.d("UserName:",userName.getText().toString());
 		 
 	 

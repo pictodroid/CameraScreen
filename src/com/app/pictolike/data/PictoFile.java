@@ -5,4 +5,5 @@ public class PictoFile {
 	public String filename;
 	public String dateCreated;
 	public String locationCreated;
+	public String img221B;
 }
