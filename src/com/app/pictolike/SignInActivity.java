@@ -1,30 +1,21 @@
 package com.app.pictolike;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import com.app.pictolike.data.MyPeople;
-import com.app.pictolike.mysql.MySQLCommand;
-import com.app.pictolike.mysql.MySQLConnect;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import android.os.StrictMode;
-
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.app.pictolike.Utils.LocationMgr;
+import com.app.pictolike.data.MyPeople;
+import com.app.pictolike.mysql.MySQLCommand;
+import com.app.pictolike.mysql.MySQLConnect;
 
 public class SignInActivity extends Activity  {
 	ImageView SignIn,Join;
@@ -41,9 +32,6 @@ public class SignInActivity extends Activity  {
 				Toast.makeText(SignInActivity.this, "Sign in failed username", Toast.LENGTH_SHORT).show();
 				return;
 			}
-			
-			
-
 			
 			Intent intent = new Intent(SignInActivity.this, TabFragmentActivity.class);
 			startActivity(intent);
@@ -66,6 +54,8 @@ public class SignInActivity extends Activity  {
 		bar.hide();
 		//ColorDrawable cd = new ColorDrawable(0xFFFBAC00);
 		//bar.setBackgroundDrawable(cd);
+		
+		LocationMgr.createInstance(getApplicationContext());
 		
 		setContentView(R.layout.actvity_signin);
 		
@@ -124,8 +114,6 @@ public class SignInActivity extends Activity  {
 		String g_gname = name;
 		Log.d("UserName:",userName.getText().toString());
 		 
-	 
-		 
 		String password = userPassword.getText().toString();
 		MySQLConnect.signin(name, password, m_oSqlListener);
 		
@@ -133,8 +121,6 @@ public class SignInActivity extends Activity  {
 			Toast.makeText(SignInActivity.this, "Please put in the username", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		
 	}
-	
 	
 }

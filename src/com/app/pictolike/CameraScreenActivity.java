@@ -9,10 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
@@ -29,7 +26,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.app.pictolike.Utils.ConfirmDlg;
 import com.app.pictolike.Utils.LocationMgr;
+import com.app.pictolike.Utils.UploadWaitDlg;
 import com.app.pictolike.mysql.MySQLCommand;
 import com.app.pictolike.mysql.MySQLConnect;
 
@@ -46,16 +45,16 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 	boolean isFlashOn = false;
 	File file;
 
-	String[] camFlashParams = { Parameters.FLASH_MODE_OFF,
-			Parameters.FLASH_MODE_ON, Parameters.FLASH_MODE_TORCH };
-
+	String[] camFlashParams = { Parameters.FLASH_MODE_OFF, Parameters.FLASH_MODE_ON, Parameters.FLASH_MODE_TORCH };
 	int camFlashIndex = 0;
+	
+	private UploadWaitDlg waitingDlg;
+	
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.activity_camerascreen,
-				container, false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+		View rootView = inflater.inflate(R.layout.activity_camerascreen, container, false);
 
 		setupViews(rootView);
 		return rootView;
@@ -63,15 +62,6 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 
 	public void setupViews(View rootView) {
 		// super.onCreate(savedInstanceState);
-
-		/** Code to change Action Bar Color */
-		// ActionBar bar = getActionBar();
-		// ColorDrawable cd = new ColorDrawable(0xFFFBAC00);
-		// bar.setBackgroundDrawable(cd);
-
-		/** Initializing the View */
-		// setContentView(R.layout.activity_camerascreen);
-		// getWindow().setFormat(PixelFormat.UNKNOWN);
 
 		locview = (ImageView)rootView.findViewById(R.id.locview);
 		locview.setVisibility(View.INVISIBLE);
@@ -88,8 +78,7 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 		
 		camera = Camera.open();
 		camera.setDisplayOrientation(90);
-		final boolean haveFlash = getActivity().getPackageManager()
-				.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+		final boolean haveFlash = getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 		final Parameters p = camera.getParameters();
 
 		if (!haveFlash) {
@@ -101,17 +90,6 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 			@Override
 			public void onClick(View v) {
 				if (haveFlash && !check && camera != null) {
-
-					// if we decided to add flash torch mode, this will be
-					// useful
-					// if(camFlashIndex < camFlashParams.length -1) {
-					// camFlashIndex ++;
-					// } else {
-					// camFlashIndex = 0;
-					// }
-					// p.setFlashMode(camFlashParams[camFlashIndex]);
-					// camera.setParameters(p);
-					// camera.startPreview();
 
 					if (isFlashOn) {
 						p.setFlashMode(Parameters.FLASH_MODE_OFF);
@@ -150,8 +128,7 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 
 					surfaceHolder = surfaceView.getHolder();
 					surfaceHolder.addCallback(CameraScreenActivity.this);
-					surfaceHolder
-					.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+					surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 					camera = Camera.open(1);
 					camera.setDisplayOrientation(90);
 					try {
@@ -177,8 +154,7 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 					}
 					surfaceHolder = surfaceView.getHolder();
 					surfaceHolder.addCallback(CameraScreenActivity.this);
-					surfaceHolder
-					.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+					surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 					camera = Camera.open(0);
 					camera.setDisplayOrientation(90);
 
@@ -230,19 +206,9 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 		}
 	}
 
-	/** Setting the MenuLayout on Action Bar */
-	// @Override
-	// public boolean onCreateOptionsMenu(Menu menu) {
-	// getMenuInflater().inflate(R.menu.activity_camerascreen_menu, menu);
-	//
-	// return true;
-	// }
-
 	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -276,44 +242,33 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 				return;
 			}
 
-			final Context context = CameraScreenActivity.this.getActivity();
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-			alertDialogBuilder.setTitle("Upload");
-			alertDialogBuilder.setMessage("Do you really want to upload?");
-			alertDialogBuilder.setIcon(android.R.drawable.ic_dialog_alert);
-			alertDialogBuilder.setPositiveButton(android.R.string.yes,
-					new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog,	int whichButton) {
-
-					String username = SignInActivity.g_name;
-					String filename = photoFile.fileName;
-					String datecreated = photoFile.timeStatmp;
-					String locationcreated = LocationMgr.getInstance().getLocation();
-
-					MySQLConnect.savefile(username, filename, datecreated, locationcreated, 
-							new MySQLCommand.OnCompleteListener() {
-
-						@Override
-						public void OnComplete(Object result) {
-							// TODO Auto-generated method stub
-							Toast.makeText(getActivity(), "Photo upload complete!", Toast.LENGTH_LONG).show();
-							
-							disableCamera();
-						}
-					});
-
-					//Toast.makeText(context, "Yaay", Toast.LENGTH_SHORT).show();
+			String title = "Upload";
+			String msg = "Do you really want to upload?";
+			
+			ConfirmDlg confirmlDlg = new ConfirmDlg(CameraScreenActivity.this.getActivity(), title, msg);
+			confirmlDlg.setButtonText("Yes", "No");
+			confirmlDlg.setConfirmListener(new ConfirmDlg.ConfirmListener() {
+				
+					@Override
+					public void onOkClick() {
+		
+						uploadPicture(photoFile);
+					}
+					
+					@Override
+					public void onCancelClick() {
+					}
 				}
-			}).setNegativeButton(android.R.string.no, null);
-
-			alertDialogBuilder.show();
-
+			);
+			
+			confirmlDlg.show();
+			
 			try {
 				FileOutputStream fos = new FileOutputStream(photoFile.photoFile);
 				fos.write(data);
 				fos.close();
 
-				//Toast.makeText(getActivity(), "Image Saved!", Toast.LENGTH_LONG).show();
+				Toast.makeText(getActivity(), "Image Saved : " + photoFile.photoFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
 			} catch (FileNotFoundException e) {
 
 			} catch (IOException e) {
@@ -322,6 +277,34 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 		}
 	};
 
+	private void uploadPicture(PhotoFile photoFile){
+
+		// show animation dlg.
+		waitingDlg = new UploadWaitDlg(this.getActivity());
+		waitingDlg.show();
+		
+		String username = SignInActivity.g_name;
+		String filename = photoFile.fileName;
+		String datecreated = photoFile.timeStatmp;
+		String locationcreated = LocationMgr.getInstance().getLocation();
+		
+		String deviceID = "";
+		String userage = "";
+		String gender = "";
+
+		MySQLConnect.savefile(username, filename, datecreated, locationcreated, 
+				deviceID, userage, gender, new MySQLCommand.OnCompleteListener() {
+
+			@Override
+			public void OnComplete(Object result) {
+				// TODO Auto-generated method stub
+				waitingDlg.showMessage("Photo upload complete!");
+				
+				disableCamera();
+			}
+		});
+		
+	}
 	/**
 	 * getOutputMediaFile returns the file path on the device where we want to
 	 * save the picture

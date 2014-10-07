@@ -8,6 +8,6 @@
     <string name="passWord">Password</string>
     <string name="Email">E-mail</string>
     <string name="resetPassword">Repeat Password</string>
-    
+    <string name="ok">OK</string>
     
 </resources>

@@ -37,7 +37,8 @@ class SaveFileCommand extends MySQLCommand {
 		m_strDeviceID=deviceID;
 	    m_strUsrAge=userage;
 		m_strUsrGender=gender;
-		m_strimg221B= img221B; //for now initiallize to zero
+		//m_strimg221B= img221B; //for now initiallize to zero
+		m_strimg221B = "";
 		
 	}
 
@@ -56,7 +57,7 @@ class SaveFileCommand extends MySQLCommand {
 			nameValuePair.add(new BasicNameValuePair(MySQLConnect.LOCATION_CREATED, m_strLocationCreated));
 			nameValuePair.add(new BasicNameValuePair(MySQLConnect.DEVICEID, m_strDeviceID));
 			nameValuePair.add(new BasicNameValuePair(MySQLConnect.USERAGE, m_strUsrAge));
-			nameValuePair.add(new BasicNameValuePair(MySQLConnect.IMAGE221B, m_strimg221B));
+			nameValuePair.add(new BasicNameValuePair(MySQLConnect.IMG221, m_strimg221B));
 			
 			
 			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
