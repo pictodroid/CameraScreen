@@ -35,7 +35,7 @@ import com.app.pictolike.mysql.MySQLConnect;
 @SuppressLint("InlinedApi")
 public class CameraScreenActivity extends Fragment implements SurfaceHolder.Callback {
 
-	Camera camera;
+	Camera camera = null;
 	SurfaceView surfaceView;
 	SurfaceHolder surfaceHolder;
 	ImageView captureButton, flipButton, flashButton;
@@ -76,8 +76,13 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 		surfaceHolder.addCallback(this);
 		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 		
-		camera = Camera.open();
-		camera.setDisplayOrientation(90);
+		try{
+			camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+			camera.setDisplayOrientation(90);
+		}catch(Exception e){
+			return;
+		}
+		
 		final boolean haveFlash = getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 		final Parameters p = camera.getParameters();
 
@@ -129,7 +134,7 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 					surfaceHolder = surfaceView.getHolder();
 					surfaceHolder.addCallback(CameraScreenActivity.this);
 					surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-					camera = Camera.open(1);
+					camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
 					camera.setDisplayOrientation(90);
 					try {
 						camera.setPreviewDisplay(surfaceHolder);
@@ -155,7 +160,7 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 					surfaceHolder = surfaceView.getHolder();
 					surfaceHolder.addCallback(CameraScreenActivity.this);
 					surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-					camera = Camera.open(0);
+					camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
 					camera.setDisplayOrientation(90);
 
 					try {
@@ -353,6 +358,9 @@ public class CameraScreenActivity extends Fragment implements SurfaceHolder.Call
 	 */
 	private void captureImage() {
 
+		if (camera == null)
+			return;
+		
 		camera.takePicture(null, null, pictureBack);
 
 		try {
